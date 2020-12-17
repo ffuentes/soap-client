@@ -554,13 +554,13 @@ class Client extends AbstractHasDispatcher implements ClientInterface
         $this->soapClient->__setSoapHeaders($this->getSessionHeader());
 
         $requestEvent = new Event\RequestEvent($method, $params);
-        $this->dispatch(Events::REQUEST, $requestEvent);
+        $this->dispatch($requestEvent, Events::REQUEST);
 
         try {
             $result = $this->soapClient->$method($params);
         } catch (\SoapFault $soapFault) {
             $faultEvent = new Event\FaultEvent($soapFault, $requestEvent);
-            $this->dispatch(Events::FAULT, $faultEvent);
+            $this->dispatch($faultEvent, Events::FAULT);
 
             throw $soapFault;
         }
@@ -570,9 +570,9 @@ class Client extends AbstractHasDispatcher implements ClientInterface
             return array();
         }
 
-        $this->dispatch(
-            Events::RESPONSE,
-            new Event\ResponseEvent($requestEvent, $result->result)
+        $this->dispatch(   
+            new Event\ResponseEvent($requestEvent, $result->result),
+            Events::RESPONSE
         );
 
         return $result->result;
