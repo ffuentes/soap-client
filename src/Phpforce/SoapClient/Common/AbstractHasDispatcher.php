@@ -1,8 +1,8 @@
 <?php
 namespace Phpforce\SoapClient\Common;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcher;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
