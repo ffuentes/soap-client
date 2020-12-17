@@ -620,7 +620,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @param string $sessionId
      */
-    protected function setSessionId($sessionId)
+    public function setSessionId($sessionId)
     {
         $this->sessionHeader = new \SoapHeader(
             self::SOAP_NAMESPACE,
@@ -644,7 +644,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @param string $location
      */
-    protected function setEndpointLocation($location)
+    public function setEndpointLocation($location)
     {
         $this->soapClient->__setLocation($location);
     }

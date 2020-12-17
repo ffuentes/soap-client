@@ -23,7 +23,7 @@ class ClientBuilder
      * @param string $token       Your Salesforce security token
      * @param array  $soapOptions Further options to be passed to the SoapClient
      */
-    public function __construct($wsdl, $username, $password, $token, array $soapOptions = array())
+    public function __construct($wsdl, ?string $username = null , ?string $password = null ,?string $token = null , array $soapOptions = array())
     {
         $this->wsdl = $wsdl;
         $this->username = $username;
@@ -51,18 +51,24 @@ class ClientBuilder
      *
      * @return Client
      */
-    public function build()
+    public function build( ?string $sessionId = null, ?string $endpoint = null  )
     {
         $soapClientFactory = new SoapClientFactory();
         $soapClient = $soapClientFactory->factory($this->wsdl, $this->soapOptions);
 
         $client = new Client($soapClient, $this->username, $this->password, $this->token);
-
+        
         if ($this->log) {
             $logPlugin = new LogPlugin($this->log);
             $client->getEventDispatcher()->addSubscriber($logPlugin);
         }
+        if ($sessionId) {
+            $client->setEndpointLocation( $endpoint );
+            $client->setSessionId($sessionId);
+        }
 
         return $client;
     }
+
+
 }
