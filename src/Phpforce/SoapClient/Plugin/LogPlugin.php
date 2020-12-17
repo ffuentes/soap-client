@@ -34,10 +34,12 @@ class LogPlugin implements EventSubscriberInterface
 
     public function onClientResponse(ResponseEvent $event)
     {
-        $this->logger->info(sprintf(
-            '[phpforce/soap-client] response: %s',
-            \print_r($event->getResponse(), true)
-        ));
+        $this->logger->info(
+            sprintf(
+                '[phpforce/soap-client] response: %s',
+                \substr(\print_r($event->getResponse(), true), 0 ,255)
+            )
+        );
     }
 
     public function onClientFault(FaultEvent $event)
