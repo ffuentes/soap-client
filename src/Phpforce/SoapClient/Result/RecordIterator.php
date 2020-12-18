@@ -81,7 +81,9 @@ class RecordIterator implements \SeekableIterator, \Countable
                     $value = new RecordIterator($this->client, $value);
                 }
             }
-
+            if( isset ( $this->current->any ) ){
+                $this->current = new PartnerSObject( $this->current, $this->client );
+            }
             return $this->current;
         }
 
