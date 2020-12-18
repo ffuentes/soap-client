@@ -4,7 +4,7 @@ namespace Phpforce\SoapClient\Result;
 
 /**
  * Standard object
- *
+ *z
  */
 class SObject
 {

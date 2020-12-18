@@ -463,7 +463,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
         foreach ($objects as $object) {
 
             $sObject = $this->createSObject($object, $type);
-            
+
             // REALLY IMPORTANT ALTERATION. (PARTNER WSDL COMPATIBILITY).
             if (isset($sObject->any)) {                
                 foreach ($sObject->any as $key => $value) {
