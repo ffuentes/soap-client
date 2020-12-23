@@ -14,6 +14,7 @@ class Field
     protected $dependentPicklist;
     protected $deprecatedAndHidden;
     protected $digits;
+    protected $externalId;
     protected $filterable;
     protected $groupable;
     protected $htmlFormatted;
@@ -87,6 +88,11 @@ class Field
     public function getDigits()
     {
         return $this->digits;
+    }
+    
+    public function getExternalId()
+    {
+        return $this->externalId;
     }
 
     public function isFilterable()
