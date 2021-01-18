@@ -247,7 +247,7 @@ class DescribeSObjectResult
     public function getRelationshipFields()
     {
         return $this->getFields()->filter(function($field) {
-            return null !== $field->getRelationshipName();
+            return null !== $field->relationshipName;
         });
     }
 
@@ -260,7 +260,7 @@ class DescribeSObjectResult
     public function getRelationshipField($name)
     {
         return $this->getRelationshipFields()->filter(function($field) use ($name) {
-            return $name === $field->getName();
+            return $name === $field->name;
         })->first();
     }
 }
