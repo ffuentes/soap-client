@@ -58,7 +58,7 @@ class DescribeSObjectResult
     public function getChildRelationship($name)
     {
         return $this->getChildRelationships()->filter(function($input) use ($name) {
-            return $name === $input->getRelationshipName();
+            return $name === $input->relationshipName;
         })->first();
     }
 
@@ -131,7 +131,7 @@ class DescribeSObjectResult
     public function getField($field)
     {
         return $this->getFields()->filter(function($input) use ($field) {
-            return $field === $input->getName();
+            return $field === $input->name;
         })->first();
     }
 
