@@ -49,14 +49,14 @@ class ClientBuilder
     /**
      * Build the Salesforce SOAP client
      *
-     * @return Client
+     * @return Client|MetadataClient
      */
-    public function build( ?string $sessionId = null, ?string $endpoint = null  )
+    public function build( ?string $sessionId = null, ?string $endpoint = null, $client = 'Client'  )
     {
         $soapClientFactory = new SoapClientFactory();
         $soapClient = $soapClientFactory->factory($this->wsdl, $this->soapOptions);
 
-        $client = new Client($soapClient, $this->username, $this->password, $this->token);
+        $client = new $client($soapClient, $this->username, $this->password, $this->token);
         
         if ($this->log) {
             $logPlugin = new LogPlugin($this->log);

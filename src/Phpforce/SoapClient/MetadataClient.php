@@ -5,7 +5,7 @@ namespace Phpforce\SoapClient;
 use Phpforce\SoapClient\Common\AbstractHasDispatcher;
 use Phpforce\SoapClient\Soap\SoapClient;
 
-class Client extends AbstractHasDispatcher {
+class MetadataClient extends AbstractHasDispatcher {
 
     /*
      * SOAP namespace
