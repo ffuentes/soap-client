@@ -14,6 +14,16 @@ class SoapClient extends \SoapClient
      * @var array
      */
     protected $types;
+    protected $rootObject;
+
+    public function setRootObject( $rootObject ){
+        $this->rootObject = $rootObject;
+    }
+
+    public function __construct($rootObject = 'sObject' )
+    {
+        $this->setRootObject($rootObject);
+    }
 
     /**
      * Retrieve SOAP types from the WSDL and parse them
@@ -41,9 +51,9 @@ class SoapClient extends \SoapClient
                     $properties[$matches[2]] = $matches[1];
                 }
 
-                // Since every object extends sObject, need to append sObject elements to all native and custom objects
-                if ($typeName !== 'sObject' && array_key_exists('sObject', $this->types)) {
-                    $properties = array_merge($properties, $this->types['sObject']);
+                // Since every object extends $rootObject, need to append sObject elements to all native and custom objects
+                if ($typeName !== $this->rootObject && array_key_exists($this->rootObject, $this->types)) {
+                    $properties = array_merge($properties, $this->types[$this->rootObject]);
                 }
 
                 $this->types[$typeName] = $properties;
