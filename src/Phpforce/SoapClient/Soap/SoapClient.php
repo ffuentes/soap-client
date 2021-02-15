@@ -20,11 +20,6 @@ class SoapClient extends \SoapClient
         $this->rootObject = $rootObject;
     }
 
-    public function __construct($rootObject = 'sObject' )
-    {
-        $this->setRootObject($rootObject);
-    }
-
     /**
      * Retrieve SOAP types from the WSDL and parse them
      *

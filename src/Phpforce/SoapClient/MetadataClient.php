@@ -2,6 +2,7 @@
 
 namespace Phpforce\SoapClient;
 
+use Phpforce\SoapClient\Request;
 use Phpforce\SoapClient\Common\AbstractHasDispatcher;
 use Phpforce\SoapClient\Soap\SoapClient;
 
@@ -12,7 +13,7 @@ class MetadataClient extends AbstractHasDispatcher {
      *
      * @var string
      */
-    const SOAP_NAMESPACE = 'urn:partner.soap.sforce.com';
+    const SOAP_NAMESPACE = 'http://soap.sforce.com/2006/04/metadata';
 
     /**
      * SOAP session header
@@ -94,7 +95,7 @@ class MetadataClient extends AbstractHasDispatcher {
 
         $requestEvent = new Event\RequestEvent($method, $params);
         $this->dispatch($requestEvent, Events::REQUEST);
-
+        
         try {
             $result = $this->soapClient->$method($params);
         } catch (\SoapFault $soapFault) {
@@ -131,7 +132,8 @@ class MetadataClient extends AbstractHasDispatcher {
     protected function createMetadataObject($object, $objectType)
     {
         $metadataObject = new \stdClass();
-
+        if( is_array( $object ) )
+          $object = (object) $object;
         foreach (get_object_vars($object) as $field => $value) {
             $type = $this->soapClient->getSoapElementType($objectType, $field);
             if ($field != 'Id' && !$type) {
@@ -278,7 +280,7 @@ class MetadataClient extends AbstractHasDispatcher {
      */
     public function checkDeployStatus(string $id,  bool $includeDetails = false)
     {
-      return $this->call( 'checkDeployStatus', array('id' => $id, 'includeDetails' => $includeDetails ) );
+      return $this->call( 'checkDeployStatus', array('asyncProcessId'=>$id, 'includeDetails' => $includeDetails ) );
     }
 
     /**
@@ -290,7 +292,7 @@ class MetadataClient extends AbstractHasDispatcher {
      */
     public function checkRetrieveStatus(string $id, bool $includeZip = true)
     {
-      return $this->call( 'checkRetrieveStatus', array( 'id'=>$id, 'includeZip' => $includeZip ) );
+      return $this->call( 'checkRetrieveStatus', array( 'asyncProcessId'=>$id, 'includeZip' => $includeZip ) );
     }
 
     /**
@@ -361,7 +363,13 @@ class MetadataClient extends AbstractHasDispatcher {
      */
     public function listMetadata(array $queries, float $asOfVersion = null)
     {
-      return $this->call('listMetadata', array('queries'=>$queries,'asOfVersion' => $asOfVersion));
+      $types = [];
+      foreach($queries as $q){
+        if(is_array( $q ) && array_key_exists('type', $q))
+          $types[] = $q;
+        else $types[] = ['type'=>$q];
+      }
+      return $this->call('listMetadata', array('queries'=>$types,'asOfVersion' => $asOfVersion|48));
     }
 
     /**
@@ -426,12 +434,15 @@ class MetadataClient extends AbstractHasDispatcher {
      * @param Request\DeployOptions $deployOptions Encapsulates options for determining which packages or files are deployed.
      * @return array
      */
-    public function deploy($zipFile ,Request\DeployOptions $deployOptions)
+    public function deploy($zipFile , $deployOptions = null)
     {
-      if( is_file( $zipFile ) ){
+      
+      /*if( file_exists( $zipFile ) ){
         $zipFile = file_get_contents($zipFile);
-      }
-      return $this->call('deploy', array('zipFile'=>$zipFile, 'deployOptions'=>$deployOptions));
+      }*/
+      if( $deployOptions == null )
+        $deployOptions = new Request\DeployOptions( false, true, false, false, false, true, true, true , 'NoTestRun' );
+      return $this->call('deploy', array('ZipFile'=> $zipFile , 'DeployOptions'=>$deployOptions));
     }
 
     /**
@@ -447,13 +458,19 @@ class MetadataClient extends AbstractHasDispatcher {
      */
     public function retrieve(array $packageMembers, $packageOptions = [], array $packageNames = null,bool $singlePackage = null, array $specificFiles = null , float $apiVersion = null)
     {
-      $packageOptions['types'] = $packageMembers;
-      return $this->call('retrieve', array('unpackaged'=>$this->createSoapVars(array('Package' => $pkg ) ), 
+      $types = [];
+      foreach($packageMembers as $objType => $values){
+        $types[] = ['name'=>$objType, 'members'=>$values];
+      }
+      $packageOptions['types'] = $types;
+      $packageOptions['version'] = null;
+      return $this->call('retrieve', array('retrieveRequest'=>array('unpackaged'=>$this->createMetadataObject( $packageOptions, 'Package' ) ,
                                           'packageNames'=>$packageNames, 
-                                          'singlePackage'=>$singlePackage, 
+                                          'singlePackage'=>$singlePackage|true, 
                                           'specificFiles'=>$specificFiles, 
-                                          'apiVersion'=> $apiVersion)
-                                        );
+                                          'apiVersion'=> $apiVersion|48.0
+                                          )
+                                        ));
     }
 
 }

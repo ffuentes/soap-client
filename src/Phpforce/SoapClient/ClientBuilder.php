@@ -55,8 +55,8 @@ class ClientBuilder
     {
         $soapClientFactory = new SoapClientFactory();
         $soapClient = $soapClientFactory->factory($this->wsdl, $this->soapOptions);
-
-        $client = new $client($soapClient, $this->username, $this->password, $this->token);
+        $className = 'Phpforce\SoapClient\\'.$client;
+        $client = new $className($soapClient, $this->username, $this->password, $this->token);
         
         if ($this->log) {
             $logPlugin = new LogPlugin($this->log);
