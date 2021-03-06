@@ -19,7 +19,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @var string
      */
-    const SOAP_NAMESPACE = 'urn:partner.soap.sforce.com';
+    const SOAP_NAMESPACE = 'urn:enterprise.soap.sforce.com';
 
     /**
      * SOAP session header
